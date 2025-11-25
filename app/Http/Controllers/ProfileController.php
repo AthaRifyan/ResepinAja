@@ -50,7 +50,7 @@ class ProfileController extends Controller
             'new_password' => 'nullable|min:8|confirmed',
         ]);
 
-        // Update name only (email cannot be changed)
+        // Update hanya name (email tidak bisa diubah)
         $user->name = $validated['name'];
 
         // Update photo if provided

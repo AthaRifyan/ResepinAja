@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Recipe; // Tambahkan model Recipe
+use App\Models\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +15,7 @@ class AdminController extends Controller
      */
     public function users()
     {
-        // Only admin can access
+        // Hanya bisa diakses olleh admin
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
@@ -33,12 +33,12 @@ class AdminController extends Controller
      */
     public function editUser(User $user)
     {
-        // Only admin can access
+        // Hanya bisa diakses oleh admin
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Admin cannot edit other admins
+        // Admin tidak bisa edit admin lain
         if ($user->isAdmin()) {
             return back()->with('error', 'Tidak dapat mengedit akun admin.');
         }
@@ -51,12 +51,12 @@ class AdminController extends Controller
      */
     public function updateUser(Request $request, User $user)
     {
-        // Only admin can access
+        // Hanya bisa diakses oleh admin
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Admin cannot edit other admins
+        // Admin tidak bisa edit admin lain
         if ($user->isAdmin()) {
             return back()->with('error', 'Tidak dapat mengedit akun admin.');
         }
@@ -92,12 +92,12 @@ class AdminController extends Controller
      */
     public function deleteUser(User $user)
     {
-        // Only admin can access
+        // Hanya bisa diakses oleh admin
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Admin cannot delete other admins
+        // Admin tidak bisa menghapus admin lain
         if ($user->isAdmin()) {
             return back()->with('error', 'Tidak dapat menghapus akun admin.');
         }
@@ -118,7 +118,7 @@ class AdminController extends Controller
      */
     public function recipes()
     {
-        // Only admin can access
+        // Hanya bisa diakses oleh admin
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
@@ -135,7 +135,7 @@ class AdminController extends Controller
      */
     public function deleteRecipe(Recipe $recipe)
     {
-        // Only admin can access
+        // Hanya bisa diakses oleh admin
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }

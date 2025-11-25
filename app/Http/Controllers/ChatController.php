@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Recipe; // Pastikan model Recipe sudah ada
+use App\Models\Recipe;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +12,7 @@ class ChatController extends Controller
     public function index(Request $request)
     {
         $messages = session('chat_messages', []);
-        $recipes = Recipe::all(); // Ambil semua resep dari database
+        $recipes = Recipe::all();
 
         return view('chat', compact('messages', 'recipes'));
     }
@@ -87,10 +87,9 @@ class ChatController extends Controller
 
         // Bangun konteks riwayat percakapan
         $historyContext = "";
-        if (count($chatHistory) > 1) { // Skip jika hanya pesan saat ini
+        if (count($chatHistory) > 1) {
             $historyContext = "\n\nRIWAYAT PERCAKAPAN SEBELUMNYA:\n";
-            // Ambil 10 pesan terakhir sebagai konteks
-            $recentHistory = array_slice($chatHistory, -11, -1); // -1 untuk mengabaikan pesan saat ini
+            $recentHistory = array_slice($chatHistory, -11, -1);
             foreach ($recentHistory as $msg) {
                 $role = $msg['role'] === 'user' ? 'User' : 'ResepinBot';
                 $historyContext .= "$role: " . $msg['content'] . "\n";

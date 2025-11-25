@@ -85,7 +85,7 @@ class RecipeController extends Controller
      */
     public function edit(Recipe $recipe, Request $request)
     {
-        // Check if the authenticated user owns the recipe or is an admin
+        // Check auth resep tersebut milik user atau admin
         if ($recipe->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
@@ -101,7 +101,7 @@ class RecipeController extends Controller
      */
     public function update(Request $request, Recipe $recipe)
     {
-        // Check if the authenticated user owns the recipe or is an admin
+        // Check auth resep tersebut milik user atau admin
         if ($recipe->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
@@ -115,9 +115,9 @@ class RecipeController extends Controller
             'steps.*' => 'required|string',
         ]);
 
-        // Update image if provided
+        // Update foto jika foto sesuai
         if ($request->hasFile('image')) {
-            // Delete old image
+            // Delete foto lama/sebelumnya
             if ($recipe->image) {
                 Storage::disk('public')->delete($recipe->image);
             }
@@ -143,12 +143,12 @@ class RecipeController extends Controller
      */
     public function destroy(Recipe $recipe)
     {
-        // Check if the authenticated user owns the recipe or is an admin
+        // Check auth resep tersebut milik user atau admin
         if ($recipe->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete the image file
+        // Delete file foto resep
         if ($recipe->image) {
             Storage::disk('public')->delete($recipe->image);
         }
@@ -167,7 +167,7 @@ class RecipeController extends Controller
         
         $pdf = Pdf::loadView('recipe-pdf', compact('recipe'));
         
-        // Generate filename from recipe title
+        // Generate nama file dari nama resep
         $filename = str_replace(' ', '-', strtolower($recipe->title)) . '.pdf';
         
         return $pdf->download($filename);
