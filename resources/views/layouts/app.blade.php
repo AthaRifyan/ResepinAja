@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -16,10 +17,7 @@
 </head>
 <body class="bg-gray-50 @yield('body-class', '')">
     @php
-        // Tentukan apakah halaman ini adalah halaman guest (tanpa sidebar)
-        $isGuestPage = request()->routeIs(['login', 'register']); // Tambahkan route lain yang ingin dianggap sebagai guest page
-        // Contoh lain yang bisa ditambahkan:
-        // $isGuestPage = request()->routeIs(['login', 'register', 'forgot.password', 'reset.password']);
+        $isGuestPage = request()->routeIs(['login', 'register']);
     @endphp
 
     @if($isGuestPage)
@@ -123,9 +121,42 @@
         })
         .catch(error => {
             console.error('Error:', error);
-            // Tampilkan pesan kesalahan di konsol, bukan alert
         });
     }
+
+    function confirmDeleteRecipe(recipeId, recipeTitle) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: `Resep "${recipeTitle}" akan dihapus secara permanen!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${recipeId}`).submit();
+            }
+        });
+    }
+
+    // Fungsi untuk menangani klik tombol hapus
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.btn-delete-recipe');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const recipeId = this.dataset.recipeId;
+                const recipeTitle = this.dataset.recipeTitle;
+
+                confirmDeleteRecipe(recipeId, recipeTitle);
+            });
+        });
+    });
+
     </script>
 </body>
 </html>

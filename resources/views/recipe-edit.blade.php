@@ -10,7 +10,12 @@
             Edit Resep
         </h1>
 
-        <form method="POST" action="{{ route('recipes.update', $recipe) }}" enctype="multipart/form-data">
+        <form method="POST" 
+            action="{{ route('recipes.update', [
+                'recipe' => $recipe, 
+                'from' => request()->query('from')
+            ]) }}" 
+            enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -126,13 +131,24 @@
                 <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition">
                     <i class="fas fa-save mr-2"></i> Simpan Perubahan
                 </button>
+                
                 @if(isset($fromAdmin) && $fromAdmin)
-                    @if(url()->previous() && !str_contains(url()->previous(), '/edit') && str_contains(url()->previous(), 'recipes/'))
+                    @if(url()->previous() && str_contains(url()->previous(), '/recipes/') && !str_contains(url()->previous(), '/edit'))
                         <a href="{{ url()->previous() }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold transition text-center">
                             Batal
                         </a>
                     @else
                         <a href="{{ route('admin.recipes') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold transition text-center">
+                            Batal
+                        </a>
+                    @endif
+                @elseif(isset($fromProfile) && $fromProfile)
+                    @if(url()->previous() && str_contains(url()->previous(), '/recipes/') && !str_contains(url()->previous(), '/edit'))
+                        <a href="{{ url()->previous() }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold transition text-center">
+                            Batal
+                        </a>
+                    @else
+                        <a href="{{ route('profile') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold transition text-center">
                             Batal
                         </a>
                     @endif

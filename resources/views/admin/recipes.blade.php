@@ -98,15 +98,18 @@
                                     </a>
 
                                     <!-- Delete Recipe Button -->
-                                    <form method="POST" 
-                                        action="{{ route('admin.recipes.delete', $recipe) }}"
-                                        onsubmit="return confirm('Yakin ingin menghapus resep \'{{ $recipe->title }}\'?')"
-                                        class="inline">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-danger text-sm px-3 py-1 btn-delete-recipe"
+                                        data-recipe-id="{{ $recipe->id }}"
+                                        data-recipe-title="{{ $recipe->title }}"
+                                        title="Hapus Resep">
+                                        <i class="fas fa-trash mr-1"></i> Hapus
+                                    </button>
+
+                                    <form id="delete-form-{{ $recipe->id }}" method="POST" action="{{ route('admin.recipes.delete', $recipe) }}" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger text-sm px-3 py-1">
-                                            <i class="fas fa-trash mr-1"></i> Hapus
-                                        </button>
                                     </form>
                                 </div>
                             </td>

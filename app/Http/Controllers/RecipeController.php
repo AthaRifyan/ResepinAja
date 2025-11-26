@@ -68,7 +68,6 @@ class RecipeController extends Controller
      */
     public function show(Recipe $recipe, Request $request)
     {
-        // Load relasi user untuk menghindari N+1 problem
         $recipe->load('user');
 
         $fromAdmin = $request->query('from') === 'admin.recipes';
@@ -90,10 +89,11 @@ class RecipeController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Deteksi dari mana user datang (untuk tombol kembali di halaman edit)
+        // Deteksi dari mana user datang
         $fromAdmin = $request->query('from') === 'admin.recipes';
+        $fromProfile = $request->query('from') === 'profile';
 
-        return view('recipe-edit', compact('recipe', 'fromAdmin'));
+        return view('recipe-edit', compact('recipe', 'fromAdmin', 'fromProfile'));
     }
 
     /**
@@ -115,27 +115,33 @@ class RecipeController extends Controller
             'steps.*' => 'required|string',
         ]);
 
-        // Update foto jika foto sesuai
+        // Update foto jika ada file baru
         if ($request->hasFile('image')) {
-            // Delete foto lama/sebelumnya
+            // Delete foto lama
             if ($recipe->image) {
                 Storage::disk('public')->delete($recipe->image);
             }
             $recipe->image = $request->file('image')->store('recipes', 'public');
         }
 
-        // Update other fields
         $recipe->title = $validated['title'];
         $recipe->ingredients = array_values(array_filter($validated['ingredients']));
         $recipe->steps = array_values(array_filter($validated['steps']));
         $recipe->save();
-
-        // Redirect kembali ke halaman yang sesuai
+        
         if ($request->query('from') === 'admin.recipes') {
-            return redirect()->route('admin.recipes')->with('success', 'Resep berhasil diperbarui!');
+            // Dari admin → redirect ke detail resep dengan context admin
+            return redirect()->route('recipes.show', ['recipe' => $recipe, 'from' => 'admin.recipes'])
+                ->with('success', 'Resep berhasil diperbarui!');
+        } elseif ($request->query('from') === 'profile') {
+            // Dari profile → redirect ke detail resep dengan context profile
+            return redirect()->route('recipes.show', ['recipe' => $recipe, 'from' => 'profile'])
+                ->with('success', 'Resep berhasil diperbarui!');
         }
 
-        return redirect()->route('profile')->with('success', 'Resep berhasil diperbarui!');
+        // Default: redirect ke detail resep (dari home/search/dll)
+        return redirect()->route('recipes.show', $recipe)
+            ->with('success', 'Resep berhasil diperbarui!');
     }
 
     /**

@@ -17,10 +17,10 @@
                 <span class="font-medium">Kembali ke Profil</span>
             </a>
         @elseif(isset($fromFavorite) && $fromFavorite)
-        <a href="{{ route('profile.favorites') }}" class="inline-flex items-center text-gray-600 hover:text-orange-500 transition">
-            <i class="fas fa-arrow-left mr-2"></i>
-            <span class="font-medium">Kembali ke Resep Favorit Saya</span>
-        </a>
+            <a href="{{ route('profile.favorites') }}" class="inline-flex items-center text-gray-600 hover:text-orange-500 transition">
+                <i class="fas fa-arrow-left mr-2"></i>
+                <span class="font-medium">Kembali ke Resep Favorit Saya</span>
+            </a>
         @else
             <a href="{{ route('home') }}" class="inline-flex items-center text-gray-600 hover:text-orange-500 transition">
                 <i class="fas fa-arrow-left mr-2"></i>
@@ -57,57 +57,60 @@
                 </div>
                 
                 <div class="flex gap-2 flex-wrap">
-                <!-- Download PDF Button -->
-                <a href="{{ route('recipes.download', $recipe) }}" 
-                    class="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                    <i class="fas fa-download mr-2"></i> Download PDF
-                </a>
+                    <!-- Download PDF Button -->
+                    <a href="{{ route('recipes.download', $recipe) }}" 
+                        class="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                        <i class="fas fa-download mr-2"></i> Download PDF
+                    </a>
 
-                @auth
-                    <button type="button" 
-                            onclick="toggleFavorite({{ $recipe->id }})"
-                            class="inline-flex items-center bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
-                            title="Tambahkan ke Favorit">
-                        <i id="favorite-icon-{{ $recipe->id }}" 
-                        class="fas fa-bookmark {{ auth()->user()->hasFavorited($recipe->id) ? 'text-pink-500' : 'text-gray-400' }}"></i>
-                        <span class="ml-2">Favorit</span>
-                    </button>
+                    @auth
+                        <button type="button" 
+                                onclick="toggleFavorite({{ $recipe->id }})"
+                                class="inline-flex items-center bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+                                title="Tambahkan ke Favorit">
+                            <i id="favorite-icon-{{ $recipe->id }}" 
+                            class="fas fa-bookmark {{ auth()->user()->hasFavorited($recipe->id) ? 'text-pink-500' : 'text-gray-400' }}"></i>
+                            <span class="ml-2">Favorit</span>
+                        </button>
 
-                    {{-- Tombol untuk Admin --}}
-                    @if(isset($fromAdmin) && $fromAdmin)
-                        <a href="{{ route('recipes.edit', ['recipe' => $recipe, 'from' => 'admin.recipes']) }}" 
-                            class="inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                            <i class="fas fa-edit mr-2"></i> Edit Resep
-                        </a>
-                        
-                        <form method="POST" action="{{ route('recipes.destroy', $recipe) }}" 
-                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus resep ini?')"
-                            class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                        @if(isset($fromAdmin) && $fromAdmin)
+                            <a href="{{ route('recipes.edit', ['recipe' => $recipe, 'from' => 'admin.recipes']) }}" 
+                                class="inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                <i class="fas fa-edit mr-2"></i> Edit Resep
+                            </a>
+                            
+                            <button 
+                                type="button" 
+                                class="inline-flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition btn-delete-recipe"
+                                data-recipe-id="{{ $recipe->id }}"
+                                data-recipe-title="{{ $recipe->title }}"
+                                title="Hapus Resep">
                                 <i class="fas fa-trash mr-2"></i> Hapus Resep
                             </button>
-                        </form>
 
-                    @elseif(isset($fromProfile) && $fromProfile && $recipe->user_id === auth()->id())
-                        <a href="{{ route('recipes.edit', $recipe) }}" 
-                            class="inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                            <i class="fas fa-edit mr-2"></i> Edit Resep
-                        </a>
-                        
-                        <form method="POST" action="{{ route('recipes.destroy', $recipe) }}" 
-                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus resep ini?')"
-                            class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                                <i class="fas fa-trash mr-2"></i> Hapus Resep
-                            </button>
-                        </form>
-                    @endif
-                @endauth
-            </div>
+                            <form id="delete-form-{{ $recipe->id }}" method="POST" action="{{ route('recipes.destroy', $recipe) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+
+                        @elseif(isset($fromProfile) && $fromProfile && $recipe->user_id === auth()->id())
+                            <a href="{{ route('recipes.edit', ['recipe' => $recipe, 'from' => 'profile']) }}" 
+                                class="inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                <i class="fas fa-edit mr-2"></i> Edit Resep
+                            </a>
+                            
+                            <form method="POST" action="{{ route('recipes.destroy', $recipe) }}" 
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus resep ini?')"
+                                class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                    <i class="fas fa-trash mr-2"></i> Hapus Resep
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
+                </div>
             </div>
 
             <!-- Ingredients Section -->

@@ -78,18 +78,23 @@
 
                         <!-- Action Buttons -->
                         <div class="grid grid-cols-2 gap-2">
-                            <a href="{{ route('recipes.edit', $recipe) }}" 
+                            <a href="{{ route('recipes.edit', ['recipe' => $recipe, 'from' => 'profile']) }}" 
                                 class="btn bg-blue-500 hover:bg-blue-600 text-white text-center text-sm">
                                 <i class="fas fa-edit mr-1"></i> Edit
                             </a>
-                            <form method="POST" 
-                                action="{{ route('recipes.destroy', $recipe) }}" 
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus resep ini?')">
+                            
+                            <button 
+                                type="button" 
+                                class="btn btn-danger w-full text-sm btn-delete-recipe"
+                                data-recipe-id="{{ $recipe->id }}"
+                                data-recipe-title="{{ $recipe->title }}"
+                                title="Hapus Resep">
+                                <i class="fas fa-trash mr-1"></i> Hapus
+                            </button>
+
+                            <form id="delete-form-{{ $recipe->id }}" method="POST" action="{{ route('recipes.destroy', $recipe) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger w-full text-sm">
-                                    <i class="fas fa-trash mr-1"></i> Hapus
-                                </button>
                             </form>
                         </div>
                     </div>
