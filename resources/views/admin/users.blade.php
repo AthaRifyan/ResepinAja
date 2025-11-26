@@ -59,14 +59,18 @@
                             class="btn bg-blue-500 hover:bg-blue-600 text-white text-center text-sm">
                             <i class="fas fa-edit mr-1"></i> Edit
                         </a>
-                        <form method="POST" 
-                            action="{{ route('admin.users.delete', $user) }}" 
-                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini? Semua resep user akan ikut terhapus!')">
+                        <button 
+                            type="button" 
+                            class="btn btn-danger w-full text-sm btn-delete-user"
+                            data-user-id="{{ $user->id }}"
+                            data-user-name="{{ $user->name }}"
+                            title="Hapus User">
+                            <i class="fas fa-trash mr-1"></i> Hapus
+                        </button>
+
+                        <form id="delete-user-form-{{ $user->id }}" method="POST" action="{{ route('admin.users.delete', $user) }}" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-full text-sm">
-                                <i class="fas fa-trash mr-1"></i> Hapus
-                            </button>
                         </form>
                     </div>
                 </div>

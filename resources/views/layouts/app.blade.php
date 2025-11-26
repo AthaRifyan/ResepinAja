@@ -157,6 +157,41 @@
         });
     });
 
+    function confirmDeleteUser(userId, userName) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: `Akun "${userName}" akan dihapus secara permanen! Semua resep milik user ini juga akan ikut terhapus.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika dikonfirmasi, submit form penghapusan
+                document.getElementById(`delete-user-form-${userId}`).submit();
+            }
+        });
+    }
+
+    // Tangani klik tombol hapus user
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const deleteUserButtons = document.querySelectorAll('.btn-delete-user');
+
+        deleteUserButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const userId = this.dataset.userId;
+                const userName = this.dataset.userName;
+
+                confirmDeleteUser(userId, userName);
+            });
+        });
+    });
+
     </script>
 </body>
 </html>
